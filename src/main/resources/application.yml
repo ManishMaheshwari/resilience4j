@@ -1,0 +1,54 @@
+resilience4j.circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 100
+        failureRateThreshold: 100
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 60s
+    instances:
+      crankyServiceFailure:
+        baseConfig: default
+        slidingWindowSize: 5
+        failureRateThreshold: 35
+        permittedNumberOfCallsInHalfOpenState: 2
+        waitDurationInOpenState: 3s
+      crankyServiceSlowCalls:
+        baseConfig: default
+        slidingWindowSize: 5
+        slowCallRateThreshold: 30
+        slowCallDurationThreshold: 300ms
+        permittedNumberOfCallsInHalfOpenState: 2
+        waitDurationInOpenState: 3s
+      someS3Service:
+        baseConfig: default
+        slidingWindowSize: 20
+
+
+resilience4j.bulkhead:
+  instances:
+    crankyServiceBulkheadSemaphore:
+      slidingWindowSize: 5
+      maxConcurrentCalls: 5
+      maxWaitDuration: 100ms
+      permittedNumberOfCallsInHalfOpenState: 2
+      waitDurationInOpenState: 3s
+
+resilience4j.ratelimiter:
+  instances:
+    crankyServiceRateLimit:
+      slidingWindowSize: 5
+      limitForPeriod: 2
+      limitRefreshPeriod: 1s
+      timeoutDuration: 100ms
+      permittedNumberOfCallsInHalfOpenState: 2
+      waitDurationInOpenState: 3s
+
+resilience4j.timelimiter:
+  instances:
+    crankyServiceTimeLimit:
+      slidingWindowSize: 5
+      timeoutDuration: 300ms
+      cancelRunningFuture: true
+      permittedNumberOfCallsInHalfOpenState: 2
+      waitDurationInOpenState: 3s
